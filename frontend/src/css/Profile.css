@@ -1,0 +1,336 @@
+.profile-page {
+  background-color: var(--page-bg, #f4f2ee);
+  min-height: calc(100vh - 52px);
+  padding: 1.5rem 1rem;
+}
+
+.profile-container {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.profile-loading {
+  text-align: center;
+  padding: 3rem;
+  color: var(--text-secondary);
+}
+
+.profile-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  margin-bottom: 0.75rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.profile-banner {
+  height: 120px;
+  background-color: var(--banner-fallback, #8f9bb3);
+  background-size: cover;
+  background-position: center;
+}
+
+.profile-header-content {
+  padding: 0 1.5rem 1.5rem;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.profile-avatar-large {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background-color: #e0e0e0;
+  border: 4px solid var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-top: -60px;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.profile-avatar-large img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.profile-edit-btn,
+.profile-add-btn,
+.profile-item-delete {
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.profile-edit-btn:focus-visible,
+.profile-add-btn:focus-visible,
+.profile-item-delete:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.profile-edit-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background-color: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary, #333);
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+  transition: background-color 0.15s, box-shadow 0.15s;
+}
+
+.profile-edit-btn:hover {
+  background-color: var(--surface-hover, #f4f2ee);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.profile-name {
+  font-size: 1.5rem;
+  margin-top: 0.75rem;
+}
+.profile-edit-btn svg,
+.profile-edit-btn .icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 500px) {
+  .profile-edit-btn {
+    top: 0.75rem;
+    right: 1rem;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.8rem;
+  }
+}
+.profile-headline {
+  color: var(--text-strong, #000000cc);
+  margin-top: 0.25rem;
+}
+
+.profile-location {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
+
+.profile-section {
+  padding: 1.5rem;
+  box-sizing: border-box;
+}
+
+.profile-section h2 {
+  font-size: 1.15rem;
+}
+
+.profile-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.profile-add-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.profile-add-btn:hover {
+  background-color: var(--surface-hover, #f4f2ee);
+}
+
+.profile-about-text {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  margin-top: 0.5rem;
+}
+
+.profile-empty-text {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  padding: 0.5rem 0;
+}
+
+.profile-item {
+  display: flex;
+  gap: 0.9rem;
+  padding: 1rem 0;
+  border-top: 1px solid var(--border);
+}
+
+.profile-item:first-of-type {
+  border-top: none;
+}
+
+.profile-item-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.profile-item-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-item-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.profile-item-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.profile-item-meta {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 0.15rem;
+}
+
+.profile-item-description {
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  line-height: 1.4;
+  white-space: pre-wrap;
+}
+
+.profile-item-delete {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  height: fit-content;
+}
+
+.profile-item-delete:hover {
+  color: var(--danger, #cc1016);
+}
+
+.inline-form {
+  background-color: var(--surface-subtle, #f9f9f9);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-sizing: border-box;
+}
+
+.inline-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.profile-action-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.profile-action-btn button {
+  padding: 0.45rem 1.1rem;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.profile-action-btn .btn-outline:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+.profile-action-btn .btn-outline:disabled:hover {
+  background-color: transparent;
+}
+
+@media (max-width: 500px) {
+  .profile-action-btn {
+    position: static;
+    margin-top: 0.75rem;
+    justify-content: flex-start;
+  }
+
+  .profile-edit-btn {
+    top: 0.75rem;
+    right: 1rem;
+  }
+
+  .profile-banner {
+    height: 90px;
+  }
+
+  .profile-avatar-large {
+    width: 90px;
+    height: 90px;
+    font-size: 2rem;
+    margin-top: -45px;
+  }
+
+  .profile-header-content {
+    padding: 0 1rem 1.25rem;
+  }
+
+  .profile-section {
+    padding: 1.25rem 1rem;
+  }
+}
+.profile-item-link {
+  display: inline-block;
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.profile-item-link:hover {
+  text-decoration: underline;
+}
+
+.project-tech-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+}
+
+.project-tech-badge {
+  background-color: #eaf3fb;
+  color: var(--primary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+}
+
+.project-links {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.6rem;
+}

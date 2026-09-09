@@ -1,0 +1,84 @@
+.skill-add-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.skill-add-form input {
+  flex: 1;
+  padding: 0.55rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.skill-add-form input:focus {
+  border-color: var(--primary);
+}
+
+.skill-add-form button {
+  padding: 0.5rem 1.2rem;
+  font-size: 0.85rem;
+}
+
+.skills-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.skill-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background-color: #f4f2ee;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 0.4rem 0.7rem 0.4rem 1rem;
+  font-size: 0.85rem;
+}
+
+.skill-name {
+  font-weight: 600;
+}
+
+.skill-endorsement-count {
+  background-color: var(--primary);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  border-radius: 50%;
+  min-width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+}
+
+.skill-endorse-btn,
+.skill-delete-btn {
+  background: none;
+  border: none;
+  font-size: 0.85rem;
+  padding: 0.1rem 0.3rem;
+  border-radius: 50%;
+}
+
+.skill-endorse-btn:hover {
+  background-color: #e0e0e0;
+}
+
+.skill-endorse-btn.endorsed {
+  filter: none;
+}
+
+.skill-delete-btn {
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+}
+
+.skill-delete-btn:hover {
+  color: #cc1016;
+}

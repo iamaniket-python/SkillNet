@@ -1,0 +1,310 @@
+.network-page {
+  background-color: var(--page-bg, #f4f2ee);
+  min-height: calc(100vh - 52px);
+  padding: 2rem 1rem;
+}
+
+.network-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.network-heading {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-primary, #1a1a1a);
+  margin-bottom: 1.25rem;
+  letter-spacing: -0.01em;
+}
+
+/* ---------- Tabs ---------- */
+
+.network-tabs {
+  display: flex;
+  gap: 0.25rem;
+  margin-bottom: 1.5rem;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.35rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.network-tabs button {
+  position: relative;
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 0.65rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.network-tabs button:hover:not(.active) {
+  background-color: var(--surface-hover, #f4f2ee);
+  color: var(--text-primary, #333);
+}
+
+.network-tabs button:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.network-tabs button.active {
+  background-color: var(--primary);
+  color: var(--white);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--primary) 35%, transparent);
+}
+
+/* ---------- Loading / Empty ---------- */
+
+.network-loading,
+.network-empty {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 3.5rem 1.5rem;
+  background: var(--white);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+}
+
+.network-empty-icon {
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
+  opacity: 0.45;
+}
+
+.network-empty-title {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text-primary, #1a1a1a);
+  margin-bottom: 0.35rem;
+}
+
+.network-empty-subtitle {
+  font-size: 0.85rem;
+  max-width: 320px;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
+.network-loading {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+/* ---------- Grid / Card view ---------- */
+
+.network-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 0.9rem;
+}
+
+.network-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.5rem 1.1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-sizing: border-box;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.network-card:hover {
+  box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.12);
+  border-color: transparent;
+  transform: translateY(-3px);
+}
+
+.network-card-avatar {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e8e8e8, #d8d8d8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.2rem;
+  line-height: 1;
+  color: var(--text-secondary);
+  margin-bottom: 0.75rem;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 3px var(--white), 0 0 0 4px var(--border);
+  transition: box-shadow 0.2s ease;
+}
+
+.network-card:hover .network-card-avatar {
+  box-shadow: 0 0 0 3px var(--white), 0 0 0 4px var(--primary);
+}
+
+.network-card-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.network-card-name {
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: var(--text-primary, #1a1a1a);
+  margin-bottom: 0.2rem;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  letter-spacing: -0.01em;
+}
+
+.network-card-headline {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+  min-height: 2.2em;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.network-card button {
+  cursor: pointer;
+  width: 100%;
+}
+
+/* ---------- List view ---------- */
+
+.network-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.network-list-item {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 0.85rem 1.1rem;
+  box-sizing: border-box;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.network-list-item:hover {
+  box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.1);
+  border-color: transparent;
+  transform: translateY(-1px);
+}
+
+.network-list-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e8e8e8, #d8d8d8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  overflow: hidden;
+  box-shadow: 0 0 0 3px var(--white), 0 0 0 4px var(--border);
+  transition: box-shadow 0.2s ease;
+}
+
+.network-list-item:hover .network-list-avatar {
+  box-shadow: 0 0 0 3px var(--white), 0 0 0 4px var(--primary);
+}
+
+.network-list-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.network-list-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.network-list-name {
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: var(--text-primary, #1a1a1a);
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  letter-spacing: -0.01em;
+}
+
+.network-list-headline {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.network-list-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.network-list-actions button {
+  padding: 0.45rem 1.1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 20px;
+}
+
+.network-list-actions button:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+@media (max-width: 600px) {
+  .network-grid {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 0.6rem;
+  }
+
+  .network-card {
+    padding: 1.1rem 0.75rem 0.9rem;
+  }
+
+  .network-list-item {
+    flex-wrap: wrap;
+  }
+
+  .network-list-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .network-card,
+  .network-list-item,
+  .network-card-avatar,
+  .network-list-avatar,
+  .network-tabs button {
+    transition: none;
+  }
+}

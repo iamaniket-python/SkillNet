@@ -1,0 +1,262 @@
+/* ===== CSS Variables (fallbacks in case not defined globally) ===== */
+:root {
+  --feed-bg: #f4f2ee;
+  --card-bg: #ffffff;
+  --card-border: rgba(0, 0, 0, 0.08);
+  --text-primary: #000000;
+  --text-secondary: #666666;
+  --accent-hover: rgba(0, 0, 0, 0.06);
+}
+
+/* ===== Feed Page Layout ===== */
+.feed-page {
+  background-color: var(--feed-bg);
+  min-height: calc(100vh - 52px);
+  padding: 1.5rem 1rem;
+  box-sizing: border-box;
+}
+
+.feed-container {
+  max-width: 552px;
+  margin: 0 auto;
+}
+
+/* ===== Status Text (loading / empty / end) ===== */
+.feed-loading,
+.feed-empty,
+.feed-end {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 1.5rem;
+  font-size: 0.9rem;
+}
+
+.feed-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+/* simple spinner if you use one */
+.feed-loading::before {
+  content: "";
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--card-border);
+  border-top-color: var(--text-secondary);
+  border-radius: 50%;
+  animation: feed-spin 0.7s linear infinite;
+}
+
+@keyframes feed-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ===== Feed Post Card ===== */
+.feed-post {
+  background: var(--card-bg);
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 0 0 1px var(--card-border);
+  overflow: hidden; /* keeps images from overflowing rounded corners */
+  transition: box-shadow 0.15s ease;
+}
+
+.feed-post:hover {
+  box-shadow: 0 0 0 1px var(--card-border), 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.feed-post-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1rem;
+}
+
+.feed-post-header-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0; /* allows text truncation to work inside flex */
+}
+
+/* Author avatar - fixed size so it never blows up */
+.feed-post-avatar {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: var(--feed-bg);
+}
+
+.feed-post-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.feed-post-author-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.feed-post-meta {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.feed-post-text {
+  padding: 0 1rem 0.75rem;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--text-primary);
+}
+
+/* ===== Post Image (in the published feed) ===== */
+.feed-post-image-wrapper {
+  width: 100%;
+  max-height: 500px;
+  overflow: hidden;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.feed-post-image-wrapper img {
+  width: 100%;
+  height: 100%;
+  max-height: 500px;
+  object-fit: contain; /* switch to 'cover' for cropped, no letterboxing */
+  display: block;
+}
+
+/* ===== Image Upload Preview (before posting) ===== */
+.upload-preview {
+  width: 100%;
+  max-height: 220px;   /* lower this (e.g. 160px) to shrink the preview further */
+  overflow: hidden;
+  border-radius: 8px;
+  margin-top: 0.5rem;
+  position: relative;
+  background: var(--feed-bg);
+}
+
+.upload-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.upload-preview-remove {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  font-size: 0.8rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s ease;
+}
+
+.upload-preview-remove:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+/* ===== Post Actions (like, comment, share) ===== */
+.feed-post-actions {
+  display: flex;
+  justify-content: space-around;
+  padding: 0.5rem 1rem;
+  border-top: 1px solid var(--card-border);
+}
+
+.feed-post-actions button {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.feed-post-actions button:hover {
+  background-color: var(--accent-hover);
+  color: var(--text-primary);
+}
+
+.feed-post-actions button:focus-visible {
+  outline: 2px solid #0a66c2;
+  outline-offset: 2px;
+}
+
+.feed-post-actions button.active {
+  color: #0a66c2;
+  font-weight: 600;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .feed-page {
+    padding: 0.75rem 0.5rem;
+  }
+
+  .feed-container {
+    max-width: 100%;
+  }
+
+  .feed-post-image-wrapper {
+    max-height: 320px;
+  }
+
+  .feed-post-avatar {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+  }
+
+  .upload-preview {
+    max-height: 180px;
+  }
+}
+
+@media (max-width: 480px) {
+  .feed-post-image-wrapper {
+    max-height: 260px;
+  }
+
+  .feed-post-header {
+    padding: 0.65rem 0.75rem;
+  }
+
+  .feed-post-text {
+    padding: 0 0.75rem 0.6rem;
+    font-size: 0.85rem;
+  }
+
+  .upload-preview {
+    max-height: 150px;
+  }
+}
