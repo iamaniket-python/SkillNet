@@ -342,3 +342,120 @@
 .chat-bubble.sent .chat-tick {
   color: rgba(255, 255, 255, 0.85);
 }
+
+/* ---------- Global fix: sabse pehle add karo file ke top pe ---------- */
+* {
+  box-sizing: border-box;
+}
+
+.messages-page {
+  background-color: #f4f2ee;
+  height: calc(100vh - 52px);
+  padding: 1.25rem;
+  overflow: hidden; /* naya — page level horizontal scroll rokta hai */
+}
+
+.messages-layout {
+  max-width: 1050px;
+  width: 100%; /* naya — 1050px se chhote screens pe overflow na ho */
+  margin: 0 auto;
+  height: 100%;
+  display: flex;
+  background: var(--white);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* ---------- Sidebar ---------- */
+
+.messages-sidebar {
+  width: 340px;
+  flex-shrink: 0; /* naya — chat area isse squeeze na kare */
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden; /* naya */
+  background-color: #fafafa;
+}
+
+.conversation-item {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.85rem 1.25rem;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.12s;
+  min-width: 0; /* naya */
+}
+
+.conversation-info {
+  flex: 1;
+  min-width: 0; /* already tha, sahi hai */
+  overflow: hidden; /* naya */
+}
+
+.conversation-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #000;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* naya — lamba naam "..." se truncate hoga */
+}
+
+/* ---------- Chat window ---------- */
+
+.messages-chat {
+  flex: 1;
+  min-width: 0; /* naya — sabse important fix, isse chat area shrink ho sakta hai */
+  display: flex;
+  flex-direction: column;
+  background-color: #fdfdfd;
+  overflow: hidden;
+}
+
+.messages-chat-body {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden; /* naya */
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  background-color: #f9f9f7;
+}
+
+.chat-bubble {
+  max-width: 62%;
+  padding: 0.55rem 0.9rem;
+  border-radius: 18px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  word-wrap: break-word;
+  overflow-wrap: anywhere; /* naya — lambe URLs/words bhi wrap honge */
+  word-break: break-word; /* naya — extra safety, Safari ke liye */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.messages-chat-input {
+  display: flex;
+  gap: 0.6rem;
+  padding: 0.85rem 1.25rem;
+  border-top: 1px solid var(--border);
+  background-color: var(--white);
+}
+
+.messages-chat-input input {
+  flex: 1;
+  min-width: 0; /* naya — input bhi shrink ho payega, button push out nahi hoga */
+  padding: 0.65rem 1.1rem;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  outline: none;
+  font-size: 0.9rem;
+  transition: border-color 0.15s;
+}
