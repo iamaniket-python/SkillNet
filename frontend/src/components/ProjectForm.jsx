@@ -1,15 +1,22 @@
 import { useState } from "react";
 import api from "../api/axios";
 
-const ProjectForm = ({ onAdded, onCancel }) => {
+const toInputDate = (dateStr) => {
+  if (!dateStr) return "";
+  return new Date(dateStr).toISOString().split("T")[0];
+};
+
+const ProjectForm = ({ project, onSaved, onCancel }) => {
+  const isEditMode = Boolean(project);
+
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    techStack: "",
-    githubUrl: "",
-    liveUrl: "",
-    startDate: "",
-    endDate: "",
+    title: project?.title || "",
+    description: project?.description || "",
+    techStack: project?.tech_stack || "",
+    githubUrl: project?.github_url || "",
+    liveUrl: project?.live_url || "",
+    startDate: toInputDate(project?.start_date),
+    endDate: toInputDate(project?.end_date),
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -23,14 +30,19 @@ const ProjectForm = ({ onAdded, onCancel }) => {
     setError("");
     setSaving(true);
     try {
-      const res = await api.post("/projects", {
+      const payload = {
         ...formData,
         startDate: formData.startDate || null,
         endDate: formData.endDate || null,
-      });
-      onAdded(res.data.project);
+      };
+
+      const res = isEditMode
+        ? await api.put(`/projects/${project.id}`, payload)
+        : await api.post("/projects", payload);
+
+      onSaved(res.data.project, isEditMode);
     } catch (err) {
-      setError(err.response?.data?.errors?.[0]?.msg || "Failed to add project");
+      setError(err.response?.data?.errors?.[0]?.msg || "Failed to save project");
     } finally {
       setSaving(false);
     }
@@ -112,7 +124,7 @@ const ProjectForm = ({ onAdded, onCancel }) => {
           Cancel
         </button>
         <button type="submit" className="btn-primary" disabled={saving}>
-          {saving ? "Saving..." : "Save"}
+          {saving ? "Saving..." : isEditMode ? "Update" : "Save"}
         </button>
       </div>
     </form>

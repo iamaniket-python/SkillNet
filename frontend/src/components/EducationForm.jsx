@@ -1,13 +1,20 @@
 import { useState } from "react";
 import api from "../api/axios";
 
-const EducationForm = ({ onAdded, onCancel }) => {
+const toInputDate = (dateStr) => {
+  if (!dateStr) return "";
+  return new Date(dateStr).toISOString().split("T")[0];
+};
+
+const EducationForm = ({ education, onSaved, onCancel }) => {
+  const isEditMode = Boolean(education);
+
   const [formData, setFormData] = useState({
-    school: "",
-    degree: "",
-    fieldOfStudy: "",
-    startDate: "",
-    endDate: "",
+    school: education?.school || "",
+    degree: education?.degree || "",
+    fieldOfStudy: education?.field_of_study || "",
+    startDate: toInputDate(education?.start_date),
+    endDate: toInputDate(education?.end_date),
   });
   const [saving, setSaving] = useState(false);
 
@@ -19,11 +26,16 @@ const EducationForm = ({ onAdded, onCancel }) => {
     e.preventDefault();
     setSaving(true);
     try {
-      const res = await api.post("/profile/education", {
+      const payload = {
         ...formData,
         endDate: formData.endDate || null,
-      });
-      onAdded(res.data.education);
+      };
+
+      const res = isEditMode
+        ? await api.put(`/profile/education/${education.id}`, payload)
+        : await api.post("/profile/education", payload);
+
+      onSaved(res.data.education, isEditMode);
     } catch (err) {
       console.error(err);
     } finally {
@@ -66,7 +78,7 @@ const EducationForm = ({ onAdded, onCancel }) => {
           Cancel
         </button>
         <button type="submit" className="btn-primary" disabled={saving}>
-          {saving ? "Saving..." : "Save"}
+          {saving ? "Saving..." : isEditMode ? "Update" : "Save"}
         </button>
       </div>
     </form>

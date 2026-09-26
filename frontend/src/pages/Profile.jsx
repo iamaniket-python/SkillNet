@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import api from "../api/axios";
 import EditProfileModal from "../components/EditProfileModal";
+import ConfirmModal from "../components/ConfirmModal";
 import AnalyticsCard from "../components/AnalyticsCard";
 import ActivityCard from "../components/ActivityCard";
 import ExperienceForm from "../components/ExperienceForm";
@@ -36,10 +37,13 @@ const Profile = () => {
   const [showCertForm, setShowCertForm] = useState(false);
   const [connectLoading, setConnectLoading] = useState(false);
 
-  // NEW: tracks which experience (if any) is currently being edited
   const [editingExperience, setEditingExperience] = useState(null);
   const [editingEducation, setEditingEducation] = useState(null);
   const [editingCertificate, setEditingCertificate] = useState(null);
+  const [editingProject, setEditingProject] = useState(null);
+
+  // generic delete-confirmation state: { type, id, label }
+  const [confirmDelete, setConfirmDelete] = useState(null);
 
   const isOwnProfile = currentUser?.id === parseInt(id, 10);
 
@@ -89,7 +93,6 @@ const Profile = () => {
     setShowEditModal(false);
   };
 
-  // UPDATED: now handles both add and edit for experience
   const handleExperienceSaved = (exp, isEditMode) => {
     if (isEditMode) {
       setExperiences((prev) => prev.map((e) => (e.id === exp.id ? exp : e)));
@@ -98,17 +101,6 @@ const Profile = () => {
     }
     setShowExpForm(false);
     setEditingExperience(null);
-  };
-
-  const handleExperienceDeleted = async (expId) => {
-    if (!window.confirm("Delete this experience?")) return;
-    try {
-      await api.delete(`/profile/experience/${expId}`);
-      setExperiences((prev) => prev.filter((e) => e.id !== expId));
-    } catch (err) {
-      console.error(err);
-      setError("Couldn't delete this experience. Please try again.");
-    }
   };
 
   const handleEducationSaved = (edu, isEditMode) => {
@@ -131,41 +123,46 @@ const Profile = () => {
     setEditingCertificate(null);
   };
 
-  const handleProjectAdded = (project) => {
-    setProjects((prev) => [project, ...prev]);
+  const handleProjectSaved = (project, isEditMode) => {
+    if (isEditMode) {
+      setProjects((prev) => prev.map((p) => (p.id === project.id ? project : p)));
+    } else {
+      setProjects((prev) => [project, ...prev]);
+    }
     setShowProjectForm(false);
+    setEditingProject(null);
   };
 
-  const handleEducationDeleted = async (eduId) => {
-    if (!window.confirm("Delete this education?")) return;
-    try {
-      await api.delete(`/profile/education/${eduId}`);
-      setEducation((prev) => prev.filter((e) => e.id !== eduId));
-    } catch (err) {
-      console.error(err);
-      setError("Couldn't delete this education entry. Please try again.");
-    }
+  // ---------- Custom delete confirmation flow (replaces window.confirm) ----------
+  const requestDelete = (type, id, label) => {
+    setConfirmDelete({ type, id, label });
   };
 
-  const handleProjectDeleted = async (projectId) => {
-    if (!window.confirm("Delete this project?")) return;
-    try {
-      await api.delete(`/projects/${projectId}`);
-      setProjects((prev) => prev.filter((p) => p.id !== projectId));
-    } catch (err) {
-      console.error(err);
-      setError("Couldn't delete this project. Please try again.");
-    }
-  };
+  const cancelDelete = () => setConfirmDelete(null);
 
-  const handleCertificateDeleted = async (certId) => {
-    if (!window.confirm("Delete this certificate?")) return;
+  const confirmDeleteAction = async () => {
+    if (!confirmDelete) return;
+    const { type, id } = confirmDelete;
+
     try {
-      await api.delete(`/certificates/${certId}`);
-      setCertificates((prev) => prev.filter((c) => c.id !== certId));
+      if (type === "experience") {
+        await api.delete(`/profile/experience/${id}`);
+        setExperiences((prev) => prev.filter((e) => e.id !== id));
+      } else if (type === "education") {
+        await api.delete(`/profile/education/${id}`);
+        setEducation((prev) => prev.filter((e) => e.id !== id));
+      } else if (type === "certificate") {
+        await api.delete(`/certificates/${id}`);
+        setCertificates((prev) => prev.filter((c) => c.id !== id));
+      } else if (type === "project") {
+        await api.delete(`/projects/${id}`);
+        setProjects((prev) => prev.filter((p) => p.id !== id));
+      }
     } catch (err) {
       console.error(err);
-      setError("Couldn't delete this certificate. Please try again.");
+      setError(`Couldn't delete this ${type}. Please try again.`);
+    } finally {
+      setConfirmDelete(null);
     }
   };
 
@@ -272,7 +269,7 @@ const Profile = () => {
 
         <ActivityCard profileId={profile.id} currentUserId={currentUser?.id} />
 
-        {/* ---------- EXPERIENCE (Edit wired) ---------- */}
+        {/* ---------- EXPERIENCE ---------- */}
         <div className="profile-card profile-section">
           <div className="profile-section-header">
             <h2>Experience</h2>
@@ -332,7 +329,7 @@ const Profile = () => {
                   </button>
                   <button
                     className="profile-item-delete"
-                    onClick={() => handleExperienceDeleted(exp.id)}
+                    onClick={() => requestDelete("experience", exp.id, exp.title)}
                     aria-label={`Delete ${exp.title} experience`}
                   >
                     ✕
@@ -343,7 +340,7 @@ const Profile = () => {
           ))}
         </div>
 
-        {/* ---------- EDUCATION (unchanged for now) ---------- */}
+        {/* ---------- EDUCATION ---------- */}
         <div className="profile-card profile-section">
           <div className="profile-section-header">
             <h2>Education</h2>
@@ -404,7 +401,7 @@ const Profile = () => {
                   </button>
                   <button
                     className="profile-item-delete"
-                    onClick={() => handleEducationDeleted(edu.id)}
+                    onClick={() => requestDelete("education", edu.id, edu.school)}
                     aria-label={`Delete ${edu.school} education entry`}
                   >
                     ✕
@@ -415,7 +412,7 @@ const Profile = () => {
           ))}
         </div>
 
-        {/* ---------- CERTIFICATES (unchanged for now) ---------- */}
+        {/* ---------- CERTIFICATES ---------- */}
         <div className="profile-card profile-section">
           <div className="profile-section-header">
             <h2>Licenses & Certificates</h2>
@@ -465,7 +462,7 @@ const Profile = () => {
                     Credential ID: {cert.credential_id}
                   </div>
                 )}
-                {cert.credential_url && (
+                {cert.credential_url ? (
                   <a
                     href={cert.credential_url}
                     target="_blank"
@@ -474,7 +471,7 @@ const Profile = () => {
                   >
                     Show credential ↗
                   </a>
-                )}
+                ) : null}
               </div>
               {isOwnProfile && (
                 <div className="profile-item-actions">
@@ -490,7 +487,7 @@ const Profile = () => {
                   </button>
                   <button
                     className="profile-item-delete"
-                    onClick={() => handleCertificateDeleted(cert.id)}
+                    onClick={() => requestDelete("certificate", cert.id, cert.name)}
                     aria-label={`Delete ${cert.name} certificate`}
                   >
                     ✕
@@ -501,24 +498,31 @@ const Profile = () => {
           ))}
         </div>
 
-        {/* ---------- PROJECTS (unchanged for now) ---------- */}
+        {/* ---------- PROJECTS ---------- */}
         <div className="profile-card profile-section">
           <div className="profile-section-header">
             <h2>Projects</h2>
             {isOwnProfile && (
               <button
                 className="profile-add-btn"
-                onClick={() => setShowProjectForm(!showProjectForm)}
+                onClick={() => {
+                  setEditingProject(null);
+                  setShowProjectForm(!showProjectForm);
+                }}
               >
                 {showProjectForm ? "✕" : "+"}
               </button>
             )}
           </div>
 
-          {showProjectForm && (
+          {(showProjectForm || editingProject) && (
             <ProjectForm
-              onAdded={handleProjectAdded}
-              onCancel={() => setShowProjectForm(false)}
+              project={editingProject}
+              onSaved={handleProjectSaved}
+              onCancel={() => {
+                setShowProjectForm(false);
+                setEditingProject(null);
+              }}
             />
           )}
 
@@ -549,7 +553,7 @@ const Profile = () => {
                   </div>
                 )}
                 <div className="project-links">
-                  {proj.github_url && (
+                  {proj.github_url ? (
                     <a
                       href={proj.github_url}
                       target="_blank"
@@ -558,8 +562,8 @@ const Profile = () => {
                     >
                       💻 GitHub ↗
                     </a>
-                  )}
-                  {proj.live_url && (
+                  ) : null}
+                  {proj.live_url ? (
                     <a
                       href={proj.live_url}
                       target="_blank"
@@ -568,21 +572,34 @@ const Profile = () => {
                     >
                       🔗 Live Demo ↗
                     </a>
-                  )}
+                  ) : null}
                 </div>
               </div>
               {isOwnProfile && (
-                <button
-                  className="profile-item-delete"
-                  onClick={() => handleProjectDeleted(proj.id)}
-                  aria-label={`Delete ${proj.title} project`}
-                >
-                  ✕
-                </button>
+                <div className="profile-item-actions">
+                  <button
+                    className="profile-item-edit"
+                    onClick={() => {
+                      setShowProjectForm(false);
+                      setEditingProject(proj);
+                    }}
+                    aria-label={`Edit ${proj.title} project`}
+                  >
+                    ✎
+                  </button>
+                  <button
+                    className="profile-item-delete"
+                    onClick={() => requestDelete("project", proj.id, proj.title)}
+                    aria-label={`Delete ${proj.title} project`}
+                  >
+                    ✕
+                  </button>
+                </div>
               )}
             </div>
           ))}
         </div>
+
         <SkillsSection profileId={profile.id} isOwnProfile={isOwnProfile} />
       </div>
 
@@ -591,6 +608,15 @@ const Profile = () => {
           profile={profile}
           onClose={() => setShowEditModal(false)}
           onSaved={handleProfileUpdated}
+        />
+      )}
+
+      {confirmDelete && (
+        <ConfirmModal
+          title="Delete this item?"
+          message={`Are you sure you want to delete "${confirmDelete.label}"? This action cannot be undone.`}
+          onConfirm={confirmDeleteAction}
+          onCancel={cancelDelete}
         />
       )}
     </div>
