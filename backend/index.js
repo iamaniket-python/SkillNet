@@ -33,6 +33,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
 const httpServer = createServer(app);
+app.set("trust proxy", 1); 
 
 const io = new Server(httpServer, {
   cors: {
