@@ -1,16 +1,15 @@
 import express from "express";
-import { addSkill, deleteSkill, getSkills, toggleEndorsement } from "../controllers/skill.controller.js";
+import { addSkill, updateSkill, deleteSkill, getSkills, toggleEndorsement } from "../controllers/skill.controller.js";
 import { protect } from "../middleware/auth.middleware.js";
 import { validate } from "../middleware/validate.middleware.js";
 import { skillValidation } from "../validators/skill.validator.js";
-import { addSkill, updateSkill, deleteSkill, getSkills, toggleEndorsement } from "../controllers/skill.controller.js";
 
 const router = express.Router();
 
 router.use(protect);
 
 router.post("/", skillValidation, validate, addSkill);
-router.put("/:id", skillValidation, validate, updateSkill);  
+router.put("/:id", skillValidation, validate, updateSkill);
 router.delete("/:id", deleteSkill);
 router.get("/user/:id", getSkills);
 router.post("/:id/endorse", toggleEndorsement);
