@@ -38,6 +38,7 @@ const Profile = () => {
 
   // NEW: tracks which experience (if any) is currently being edited
   const [editingExperience, setEditingExperience] = useState(null);
+  const [editingEducation, setEditingEducation] = useState(null);
 
   const isOwnProfile = currentUser?.id === parseInt(id, 10);
 
