@@ -109,14 +109,24 @@ const Profile = () => {
     }
   };
 
-  const handleEducationAdded = (edu) => {
-    setEducation((prev) => [edu, ...prev]);
+  const handleEducationSaved = (edu, isEditMode) => {
+    if (isEditMode) {
+      setEducation((prev) => prev.map((e) => (e.id === edu.id ? edu : e)));
+    } else {
+      setEducation((prev) => [edu, ...prev]);
+    }
     setShowEduForm(false);
+    setEditingEducation(null);
   };
 
-  const handleCertificateAdded = (cert) => {
-    setCertificates((prev) => [cert, ...prev]);
+  const handleCertificateSaved = (cert, isEditMode) => {
+    if (isEditMode) {
+      setCertificates((prev) => prev.map((c) => (c.id === cert.id ? cert : c)));
+    } else {
+      setCertificates((prev) => [cert, ...prev]);
+    }
     setShowCertForm(false);
+    setEditingCertificate(null);
   };
 
   const handleProjectAdded = (project) => {
@@ -338,17 +348,24 @@ const Profile = () => {
             {isOwnProfile && (
               <button
                 className="profile-add-btn"
-                onClick={() => setShowEduForm(!showEduForm)}
+                onClick={() => {
+                  setEditingEducation(null);
+                  setShowEduForm(!showEduForm);
+                }}
               >
                 {showEduForm ? "✕" : "+"}
               </button>
             )}
           </div>
 
-          {showEduForm && (
+          {(showEduForm || editingEducation) && (
             <EducationForm
-              onAdded={handleEducationAdded}
-              onCancel={() => setShowEduForm(false)}
+              education={editingEducation}
+              onSaved={handleEducationSaved}
+              onCancel={() => {
+                setShowEduForm(false);
+                setEditingEducation(null);
+              }}
             />
           )}
 
@@ -372,13 +389,25 @@ const Profile = () => {
                 </div>
               </div>
               {isOwnProfile && (
-                <button
-                  className="profile-item-delete"
-                  onClick={() => handleEducationDeleted(edu.id)}
-                  aria-label={`Delete ${edu.school} education entry`}
-                >
-                  ✕
-                </button>
+                <div className="profile-item-actions">
+                  <button
+                    className="profile-item-edit"
+                    onClick={() => {
+                      setShowEduForm(false);
+                      setEditingEducation(edu);
+                    }}
+                    aria-label={`Edit ${edu.school} education entry`}
+                  >
+                    ✎
+                  </button>
+                  <button
+                    className="profile-item-delete"
+                    onClick={() => handleEducationDeleted(edu.id)}
+                    aria-label={`Delete ${edu.school} education entry`}
+                  >
+                    ✕
+                  </button>
+                </div>
               )}
             </div>
           ))}
@@ -391,17 +420,24 @@ const Profile = () => {
             {isOwnProfile && (
               <button
                 className="profile-add-btn"
-                onClick={() => setShowCertForm(!showCertForm)}
+                onClick={() => {
+                  setEditingCertificate(null);
+                  setShowCertForm(!showCertForm);
+                }}
               >
                 {showCertForm ? "✕" : "+"}
               </button>
             )}
           </div>
 
-          {showCertForm && (
+          {(showCertForm || editingCertificate) && (
             <CertificateForm
-              onAdded={handleCertificateAdded}
-              onCancel={() => setShowCertForm(false)}
+              certificate={editingCertificate}
+              onSaved={handleCertificateSaved}
+              onCancel={() => {
+                setShowCertForm(false);
+                setEditingCertificate(null);
+              }}
             />
           )}
 
@@ -439,13 +475,25 @@ const Profile = () => {
                 )}
               </div>
               {isOwnProfile && (
-                <button
-                  className="profile-item-delete"
-                  onClick={() => handleCertificateDeleted(cert.id)}
-                  aria-label={`Delete ${cert.name} certificate`}
-                >
-                  ✕
-                </button>
+                <div className="profile-item-actions">
+                  <button
+                    className="profile-item-edit"
+                    onClick={() => {
+                      setShowCertForm(false);
+                      setEditingCertificate(cert);
+                    }}
+                    aria-label={`Edit ${cert.name} certificate`}
+                  >
+                    ✎
+                  </button>
+                  <button
+                    className="profile-item-delete"
+                    onClick={() => handleCertificateDeleted(cert.id)}
+                    aria-label={`Delete ${cert.name} certificate`}
+                  >
+                    ✕
+                  </button>
+                </div>
               )}
             </div>
           ))}

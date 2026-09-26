@@ -1,14 +1,21 @@
 import { useState } from "react";
 import api from "../api/axios";
 
-const CertificateForm = ({ onAdded, onCancel }) => {
+const toInputDate = (dateStr) => {
+  if (!dateStr) return "";
+  return new Date(dateStr).toISOString().split("T")[0];
+};
+
+const CertificateForm = ({ certificate, onSaved, onCancel }) => {
+  const isEditMode = Boolean(certificate);
+
   const [formData, setFormData] = useState({
-    name: "",
-    issuingOrganization: "",
-    issueDate: "",
-    expiryDate: "",
-    credentialId: "",
-    credentialUrl: "",
+    name: certificate?.name || "",
+    issuingOrganization: certificate?.issuing_organization || "",
+    issueDate: toInputDate(certificate?.issue_date),
+    expiryDate: toInputDate(certificate?.expiry_date),
+    credentialId: certificate?.credential_id || "",
+    credentialUrl: certificate?.credential_url || "",
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -22,26 +29,24 @@ const CertificateForm = ({ onAdded, onCancel }) => {
     setError("");
     setSaving(true);
     try {
-      const res = await api.post("/certificates", {
-        
+      const payload = {
         ...formData,
-        
         expiryDate: formData.expiryDate || null,
-        
-      });
-      onAdded(res.data.certificate);
-    }catch (err) {
-  console.log("STATUS:", err.response?.status);
-  console.log("DATA:", err.response?.data);
-  console.log("REQUEST DATA:", {
-    ...formData,
-    expiryDate: formData.expiryDate || null,
-  });
- setError(
-    err.response?.data?.errors?.[0]?.msg ||
-    err.response?.data?.message ||
-    "Failed to add certificate"
-  );
+      };
+
+      const res = isEditMode
+        ? await api.put(`/certificates/${certificate.id}`, payload)
+        : await api.post("/certificates", payload);
+
+      onSaved(res.data.certificate, isEditMode);
+    } catch (err) {
+      console.log("STATUS:", err.response?.status);
+      console.log("DATA:", err.response?.data);
+      setError(
+        err.response?.data?.errors?.[0]?.msg ||
+        err.response?.data?.message ||
+        "Failed to save certificate"
+      );
     } finally {
       setSaving(false);
     }
@@ -115,7 +120,7 @@ const CertificateForm = ({ onAdded, onCancel }) => {
           Cancel
         </button>
         <button type="submit" className="btn-primary" disabled={saving}>
-          {saving ? "Saving..." : "Save"}
+          {saving ? "Saving..." : isEditMode ? "Update" : "Save"}
         </button>
       </div>
     </form>
