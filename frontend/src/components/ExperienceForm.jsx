@@ -1,14 +1,23 @@
 import { useState } from "react";
 import api from "../api/axios";
 
-const ExperienceForm = ({ onAdded, onCancel }) => {
+// backend se aayi date (ISO string / timestamp) ko <input type="date"> ke
+// liye YYYY-MM-DD format mein convert karta hai
+const toInputDate = (dateStr) => {
+  if (!dateStr) return "";
+  return new Date(dateStr).toISOString().split("T")[0];
+};
+
+const ExperienceForm = ({ experience, onSaved, onCancel }) => {
+  const isEditMode = Boolean(experience);
+
   const [formData, setFormData] = useState({
-    title: "",
-    company: "",
-    location: "",
-    startDate: "",
-    endDate: "",
-    description: "",
+    title: experience?.title || "",
+    company: experience?.company || "",
+    location: experience?.location || "",
+    startDate: toInputDate(experience?.start_date),
+    endDate: toInputDate(experience?.end_date),
+    description: experience?.description || "",
   });
   const [saving, setSaving] = useState(false);
 
@@ -20,11 +29,16 @@ const ExperienceForm = ({ onAdded, onCancel }) => {
     e.preventDefault();
     setSaving(true);
     try {
-      const res = await api.post("/profile/experience", {
+      const payload = {
         ...formData,
         endDate: formData.endDate || null,
-      });
-      onAdded(res.data.experience);
+      };
+
+      const res = isEditMode
+        ? await api.put(`/profile/experience/${experience.id}`, payload)
+        : await api.post("/profile/experience", payload);
+
+      onSaved(res.data.experience, isEditMode);
     } catch (err) {
       console.error(err);
     } finally {
@@ -71,7 +85,7 @@ const ExperienceForm = ({ onAdded, onCancel }) => {
           Cancel
         </button>
         <button type="submit" className="btn-primary" disabled={saving}>
-          {saving ? "Saving..." : "Save"}
+          {saving ? "Saving..." : isEditMode ? "Update" : "Save"}
         </button>
       </div>
     </form>

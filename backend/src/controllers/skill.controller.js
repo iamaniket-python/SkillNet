@@ -38,6 +38,33 @@ export const deleteSkill = asyncHandler(async (req, res) => {
   res.json({ message: "Skill deleted" });
 });
 
+export const updateSkill = asyncHandler(async (req, res) => {
+  const userId = req.user.id;
+  const { id } = req.params;
+  const { name } = req.body;
+
+  // duplicate check (same user, same name, excluding current skill)
+  const existing = await pool.query(
+    "SELECT id FROM skills WHERE user_id = $1 AND LOWER(name) = LOWER($2) AND id != $3",
+    [userId, name, id]
+  );
+
+  if (existing.rows.length > 0) {
+    return res.status(400).json({ message: "Skill already exists" });
+  }
+
+  const result = await pool.query(
+    `UPDATE skills SET name = $1 WHERE id = $2 AND user_id = $3 RETURNING *`,
+    [name.trim(), id, userId]
+  );
+
+  if (result.rows.length === 0) {
+    return res.status(404).json({ message: "Skill not found or not authorized" });
+  }
+
+  res.json({ skill: result.rows[0] });
+});
+
 export const getSkills = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const currentUserId = req.user.id;

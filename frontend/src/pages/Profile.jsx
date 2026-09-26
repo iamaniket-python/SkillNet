@@ -36,6 +36,9 @@ const Profile = () => {
   const [showCertForm, setShowCertForm] = useState(false);
   const [connectLoading, setConnectLoading] = useState(false);
 
+  // NEW: tracks which experience (if any) is currently being edited
+  const [editingExperience, setEditingExperience] = useState(null);
+
   const isOwnProfile = currentUser?.id === parseInt(id, 10);
 
   const handleConnect = async () => {
@@ -84,9 +87,15 @@ const Profile = () => {
     setShowEditModal(false);
   };
 
-  const handleExperienceAdded = (exp) => {
-    setExperiences((prev) => [exp, ...prev]);
+  // UPDATED: now handles both add and edit for experience
+  const handleExperienceSaved = (exp, isEditMode) => {
+    if (isEditMode) {
+      setExperiences((prev) => prev.map((e) => (e.id === exp.id ? exp : e)));
+    } else {
+      setExperiences((prev) => [exp, ...prev]);
+    }
     setShowExpForm(false);
+    setEditingExperience(null);
   };
 
   const handleExperienceDeleted = async (expId) => {
@@ -100,8 +109,6 @@ const Profile = () => {
     }
   };
 
-  // --- FIX: these two handlers were missing, causing a ReferenceError
-  // as soon as EducationForm / CertificateForm called onAdded(...)
   const handleEducationAdded = (edu) => {
     setEducation((prev) => [edu, ...prev]);
     setShowEduForm(false);
@@ -155,7 +162,11 @@ const Profile = () => {
     return (
       <div className="profile-loading">
         {error || "Profile not found."}
-        <button className="btn-outline" onClick={loadProfile} style={{ marginLeft: 12 }}>
+        <button
+          className="btn-outline"
+          onClick={loadProfile}
+          style={{ marginLeft: 12 }}
+        >
           Retry
         </button>
       </div>
@@ -185,7 +196,10 @@ const Profile = () => {
           <div className="profile-header-content">
             <div className="profile-avatar-large">
               {profile.profile_picture ? (
-                <img src={profile.profile_picture} alt={`${profile.first_name} ${profile.last_name}`} />
+                <img
+                  src={profile.profile_picture}
+                  alt={`${profile.first_name} ${profile.last_name}`}
+                />
               ) : (
                 <span>{profile.first_name?.[0]}</span>
               )}
@@ -235,7 +249,7 @@ const Profile = () => {
           </div>
         </div>
 
-       {isOwnProfile && <AnalyticsCard />}
+        {isOwnProfile && <AnalyticsCard />}
 
         {profile.about && (
           <div className="profile-card profile-section">
@@ -243,26 +257,34 @@ const Profile = () => {
             <p className="profile-about-text">{profile.about}</p>
           </div>
         )}
-        
 
         <ActivityCard profileId={profile.id} currentUserId={currentUser?.id} />
+
+        {/* ---------- EXPERIENCE (Edit wired) ---------- */}
         <div className="profile-card profile-section">
           <div className="profile-section-header">
             <h2>Experience</h2>
             {isOwnProfile && (
               <button
                 className="profile-add-btn"
-                onClick={() => setShowExpForm(!showExpForm)}
+                onClick={() => {
+                  setEditingExperience(null);
+                  setShowExpForm(!showExpForm);
+                }}
               >
                 {showExpForm ? "✕" : "+"}
               </button>
             )}
           </div>
 
-          {showExpForm && (
+          {(showExpForm || editingExperience) && (
             <ExperienceForm
-              onAdded={handleExperienceAdded}
-              onCancel={() => setShowExpForm(false)}
+              experience={editingExperience}
+              onSaved={handleExperienceSaved}
+              onCancel={() => {
+                setShowExpForm(false);
+                setEditingExperience(null);
+              }}
             />
           )}
 
@@ -285,18 +307,31 @@ const Profile = () => {
                 )}
               </div>
               {isOwnProfile && (
-                <button
-                  className="profile-item-delete"
-                  onClick={() => handleExperienceDeleted(exp.id)}
-                  aria-label={`Delete ${exp.title} experience`}
-                >
-                  ✕
-                </button>
+                <div className="profile-item-actions">
+                  <button
+                    className="profile-item-edit"
+                    onClick={() => {
+                      setShowExpForm(false);
+                      setEditingExperience(exp);
+                    }}
+                    aria-label={`Edit ${exp.title} experience`}
+                  >
+                    ✎
+                  </button>
+                  <button
+                    className="profile-item-delete"
+                    onClick={() => handleExperienceDeleted(exp.id)}
+                    aria-label={`Delete ${exp.title} experience`}
+                  >
+                    ✕
+                  </button>
+                </div>
               )}
             </div>
           ))}
         </div>
 
+        {/* ---------- EDUCATION (unchanged for now) ---------- */}
         <div className="profile-card profile-section">
           <div className="profile-section-header">
             <h2>Education</h2>
@@ -349,6 +384,7 @@ const Profile = () => {
           ))}
         </div>
 
+        {/* ---------- CERTIFICATES (unchanged for now) ---------- */}
         <div className="profile-card profile-section">
           <div className="profile-section-header">
             <h2>Licenses & Certificates</h2>
@@ -415,8 +451,7 @@ const Profile = () => {
           ))}
         </div>
 
-        {/* FIX: Projects section moved inside profile-container so it
-            shares the same layout/width as the other sections */}
+        {/* ---------- PROJECTS (unchanged for now) ---------- */}
         <div className="profile-card profile-section">
           <div className="profile-section-header">
             <h2>Projects</h2>

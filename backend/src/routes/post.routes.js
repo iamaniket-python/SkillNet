@@ -3,6 +3,7 @@ import {
   createPost,
   getFeed,
   getPost,
+  updatePost, 
   deletePost,
   toggleLike,
   addComment,
@@ -22,6 +23,7 @@ router.use(protect);
 router.post("/", createPostValidation, validate, createPost);
 router.get("/feed", getFeed);
 router.get("/:id", getPost);
+router.put("/:id", createPostValidation, validate, updatePost);
 router.delete("/:id", deletePost);
 router.post("/:id/like", toggleLike);
 router.post("/:id/comments", commentValidation, validate, addComment);

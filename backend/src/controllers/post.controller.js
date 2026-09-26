@@ -59,6 +59,27 @@ export const getPost = asyncHandler(async (req, res) => {
 
   res.json({ post: result.rows[0] });
 });
+export const updatePost = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { content, imageUrl } = req.body;
+  const userId = req.user.id;
+
+  const result = await pool.query(
+    `UPDATE posts 
+     SET content = COALESCE($1, content), 
+         image_url = COALESCE($2, image_url),
+         updated_at = NOW()
+     WHERE id = $3 AND user_id = $4
+     RETURNING *`,
+    [content, imageUrl, id, userId]
+  );
+
+  if (result.rows.length === 0) {
+    return res.status(404).json({ message: "Post not found or not authorized" });
+  }
+
+  res.json({ post: result.rows[0] });
+});
 
 export const deletePost = asyncHandler(async (req, res) => {
   const { id } = req.params;
